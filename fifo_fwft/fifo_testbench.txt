@@ -1,1 +1,77 @@
+module fifo_tb;
+    parameter depth = 8;
+    parameter width = 8;
+    
+    logic clk = 0, rst;
+    logic w_en = 0, r_en = 0;
+    logic [width-1:0] data_in, data_out;
+    logic full, empty;
+    
+    fifo #(.depth(depth), .width(width)) uut (.*);
+    
+    always #5 clk = ~clk;
+    
+    // Test sequence
+    initial begin
+        // Reset
+        rst = 1;
+        #25;
+        rst = 0;
+        
+        $display("\n=== FWFT FIFO TEST ===\n");
+        
 
+        write_data(8'hA0);
+        write_data(8'hA5);
+        write_data(8'hAA);
+        write_data(8'hAF);
+        
+       
+        repeat(2) @(posedge clk);
+        
+        read_data(); 
+        read_data(); 
+        
+        // Write more while reading
+        write_data(8'hB0);
+        read_data(); 
+        
+        write_data(8'hB5);
+        write_data(8'hBA);
+        
+        read_data(); 
+        read_data();
+        
+        repeat(5) @(posedge clk);
+        $display("\n=== TEST COMPLETE ===");
+        $finish;
+    end
+
+    task write_data(logic [width-1:0] data);
+        @(posedge clk);
+        w_en = 1;
+        data_in = data;
+        $display("Time=%0t | WRITE: 0x%h", $time, data);
+        @(posedge clk);
+        w_en = 0;
+    endtask
+    
+
+    task read_data();
+        @(posedge clk);
+        //#1; // Small delay to let signals settle
+        $display("Time=%0t | FWFT DATA VISIBLE: 0x%h (before r_en)", $time, data_out);
+        r_en = 1; // Consume the data
+        @(posedge clk); // Pointer increments here
+        //#1;
+        $display("Time=%0t | AFTER READ: next data = 0x%h", $time, data_out);
+        r_en = 0;
+    endtask
+    
+
+    always @(posedge clk) begin
+        if (!rst)
+            $display("  [%0t] w_ptr=%0d r_ptr=%0d | out=0x%h | F=%0b E=%0b", 
+                     $time, uut.w_ptr, uut.r_ptr, data_out, full, empty);
+    end
+endmodule:fifo_tb
