@@ -6,8 +6,9 @@ dut duut(.pclk(vif.pclk),.prstn(vif.prstn),.paddr(vif.paddr),.psel(vif.psel),
 );
 
 initial vif.pclk=0;
-always vif.pclk=~vif.pclk;
+always #5 vif.pclk=~vif.pclk;
 
 assertion a1(vif);
 test t1(vif);
 endmodule:tb
+
