@@ -11,7 +11,7 @@ endproperty: data_stability
 
 property fwft;
     @(posedge vif.clk) disable iff(vif.rst || $isunknown(vif.data_out) || vif.r_en)
-    vif.w_en && !vif.full & !vif.empty |=>  vif.data_out===$past(vif.data_in);
+    vif.w_en && !vif.full && vif.empty |=>  vif.data_out===$past(vif.data_in);
 endproperty:fwft
 
 property full_property;
