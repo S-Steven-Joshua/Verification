@@ -16,7 +16,7 @@ endproperty:fwft
 
 property full_property;
     @(posedge vif.clk) disable iff(vif.rst)
-    vif.w_en && vif.full |=> $stable(vif.data_in);
+    vif.w_en && vif.full |=> $stable(vif.full);
 endproperty:full_property
 
 property safety;
