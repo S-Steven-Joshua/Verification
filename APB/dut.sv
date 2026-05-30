@@ -29,7 +29,7 @@ always_ff @(posedge pclk or negedge prstn)
                         S0:
                             begin
                                 //prdata<=32'b0;
-                                if(psel && trans)
+                                if(psel && !penable && trans)
                                     begin
                                         state<=S1;
                                     end
