@@ -41,7 +41,7 @@ always_ff @(posedge pclk or negedge prstn)
                         S1:
                             begin
                                 //prdata<=32'b0;
-                                if(psel && penable && trans)
+                                if(psel && trans)
                                     begin
                                         state<=S2;
                                     end
@@ -52,7 +52,7 @@ always_ff @(posedge pclk or negedge prstn)
                             end
                         S2:
                             begin
-                                if(pready)
+                                if(pready && penable)
                                     begin
                                         if(pwrite)
                                             begin
