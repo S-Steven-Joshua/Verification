@@ -29,7 +29,7 @@ always_ff @(posedge pclk or negedge prstn)
                         S0:
                             begin
                                 //prdata<=32'b0;
-                                if(psel && !penable && trans)
+                                if(!psel && trans && !penable)
                                     begin
                                         state<=S1;
                                     end
@@ -41,7 +41,7 @@ always_ff @(posedge pclk or negedge prstn)
                         S1:
                             begin
                                 //prdata<=32'b0;
-                                if(psel && trans)
+                                if(psel && !penable)
                                     begin
                                         state<=S2;
                                     end
@@ -52,29 +52,24 @@ always_ff @(posedge pclk or negedge prstn)
                             end
                         S2:
                             begin
-                                if(pready && penable)
+                                if(psel && penable)
                                     begin
-                                        if(pwrite)
+                                        if(pready)
                                             begin
-                                                mem[paddr]<=pwdata;
-                                            end
-                                        // else
-                                        //     begin
-                                        //         prdata<=mem[paddr];
-                                        //     end
-                                        if(trans)
-                                            begin
-                                                state<=S1;
+                                                if(pwrite)
+                                                    begin
+                                                        mem[paddr]=pwdata;
+                                                    end
+                                                if(trans && pready)
+                                                    state<=S1;
+                                                else if(!trans && pready)
+                                                    state<=S0;
                                             end
                                         else
-                                            begin
-                                                state<=S0;
-                                            end
+                                            state<=S2;
                                     end
                                 else
-                                    begin
-                                        state<=S2;
-                                    end
+                                    stat<=S0
                             end
                     default:state<=S0;
                 endcase    
