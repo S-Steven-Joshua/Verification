@@ -58,7 +58,7 @@ always_ff @(posedge pclk or negedge prstn)
                                             begin
                                                 if(pwrite)
                                                     begin
-                                                        mem[paddr]=pwdata;
+                                                        mem[paddr]<=pwdata;
                                                     end
                                                 if(trans && pready)
                                                     state<=S1;
