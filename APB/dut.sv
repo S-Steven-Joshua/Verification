@@ -69,7 +69,7 @@ always_ff @(posedge pclk or negedge prstn)
                                             state<=S2;
                                     end
                                 else
-                                    stat<=S0
+                                    state<=S0
                             end
                     default:state<=S0;
                 endcase    
